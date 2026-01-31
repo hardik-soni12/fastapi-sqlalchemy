@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='fastapi-sqlalchemy-ease',
-    version='0.1.1',
+    version='0.1.2',
     description="A reusable SQLAlchemy extension for FastAPI",
     packages=find_packages(),
     python_requires='>=3.8',
