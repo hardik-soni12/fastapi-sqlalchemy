@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "fastapi-sqlalchemy"
+version = "0.1.0"
+description = "A reusable SQLAlchemy extension for FastAPI"
+requires-python = ">=3.8"
+dependencies = [
+    "sqlalchemy>=2.0.0",
+]
