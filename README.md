@@ -1,14 +1,14 @@
-# fastapi-sqlalchemy
+# fastapi-sqlalchemy-ease
 A reusable SQLAlchemy extension for FastAPI.
 
 ## Installation
 ```bash
-pip install fastapi-sqlalchemy
+pip install fastapi-sqlalchemy-ease
 ```
 
 ## Usage
 ```python
-from fastapi_sqlalchemy import SQLAlchemy
+from fastapi_sqlalchemy_ease import SQLAlchemy
 
 db = SQLAlchemy()
 DATABASE_URI = "sqlite:///site.db"
