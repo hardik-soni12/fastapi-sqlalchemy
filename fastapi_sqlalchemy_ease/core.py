@@ -43,15 +43,18 @@ class SQLAlchemy:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
+            cls._instance._Model = declarative_base()
         return cls._instance
     
 
     def __init__(self):
-        # Everything starts as None Until db.init_app() is called
-        self.engine = None
-        self._SessionLocal = None
-        self._Model = None
-        self._initialized = False
+        if not hasattr(self, '_initialized_vars'):
+            # Everything starts as None Until db.init_app() is called
+            self.engine = None
+            self._SessionLocal = None
+            self.session = None 
+            self._initialized = False
+            self._initialized_vars = True
 
 
     def init_app(self, DATABASE_URI: str, connect_args: Optional[dict]=None):
@@ -77,8 +80,9 @@ class SQLAlchemy:
         # SessionLocal - Factory data creates new sessions
         self._SessionLocal = sessionmaker(autoflush=False ,bind=self.engine)
 
-        # Model - base class, all our database models will inherit from
-        self._Model = declarative_base()
+        from sqlalchemy.orm import scoped_session
+        self.session = scoped_session(self._SessionLocal)
+        self._Model.query = self.session.query_property()
 
         self._initialized = True
 
@@ -91,9 +95,6 @@ class SQLAlchemy:
         Base class for creating database models
         User writes: class User(db.Model):
         '''
-
-        if not self._initialized:
-            raise DatabaseNotInitializedError('Database not Intialized, call db.init_app() first.')
         
         return self._Model
     
@@ -136,8 +137,8 @@ class SQLAlchemy:
         if not self._initialized:
             raise DatabaseNotInitializedError('Database not Intialized, call db.init_app() first.')
             
-        session = self._SessionLocal()
+        session = self.session()
         try:
             yield session # Give session to the route
         finally:
-            session.close() #always close after one requst
+            self.session.remove() #proper cleanup for scoped sessions
