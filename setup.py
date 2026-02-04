@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='fastapi-sqlalchemy-ease',
-    version='0.1.7',
+    version='0.1.8',
     author='Hardik soni',
     author_email='imailhr1k@gmail.com',
     description="A reusable SQLAlchemy extension for FastAPI",
