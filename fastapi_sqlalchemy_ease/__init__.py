@@ -1,7 +1,7 @@
 from .core import SQLAlchemy
 from .exceptions import DatabaseError, DatabaseNotInitializedError
 
-__version__='0.1.6'
+__version__='0.1.7'
 
 # when someone call: from fastapi_sqlalchemy import SQLAlchemy
 # only these things are available
