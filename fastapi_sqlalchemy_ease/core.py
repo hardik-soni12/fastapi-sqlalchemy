@@ -6,7 +6,8 @@ from sqlalchemy import (
     Numeric,
     ForeignKey,
     UniqueConstraint, CheckConstraint,
-    Index, Table
+    Index, Table,
+    func, and_, any_, not_, or_, select, update, delete, desc, asc
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, Session, relationship
 from typing import Generator, Optional
@@ -31,6 +32,24 @@ class SQLAlchemy:
     JSON = JSON
     LargeBinary = LargeBinary
     Numeric = Numeric
+
+    '''Logic and Boolean operators'''
+    and_ = and_
+    or_ = or_
+    not_ = not_
+
+    '''SQL Functions (count, now, max, min, etc.)'''
+    func = func
+
+    '''Query Execution Utilities'''
+    select = select
+    update = update
+    delete = delete
+
+    '''ordering'''
+    desc = desc
+    asc = asc
+
 
     '''Relationships and Constraints'''
     ForeignKey = ForeignKey
@@ -57,7 +76,7 @@ class SQLAlchemy:
             self._initialized_vars = True
 
 
-    def init_app(self, DATABASE_URI: str, connect_args: Optional[dict]=None):
+    def init_app(self, DATABASE_URI: str, **kwargs):
         '''
         Docstring for init_app
         
@@ -67,12 +86,16 @@ class SQLAlchemy:
         connect_args: used only when initializing sqlite db
         '''
 
-        engine_kwargs={}
+        engine_kwargs={
+            "pool_pre_ping": True,
+        }
 
-        if connect_args:
-            engine_kwargs['connect_args'] = connect_args # sqlite need this
-        else:
-            engine_kwargs['pool_pre_ping'] = True # Keeps connection alive for PostgreSQL/MySQL
+        # Only add pooling if NOT using SQLite
+        if not DATABASE_URI.startswith("sqlite"):
+            engine_kwargs["pool_size"] = kwargs.get("pool_size", 10)
+            engine_kwargs["max_overflow"] = kwargs.get("max_overflow", 20)
+
+        engine_kwargs.update(kwargs)
 
         # Engine connection to database
         self.engine = create_engine(DATABASE_URI, **engine_kwargs)
