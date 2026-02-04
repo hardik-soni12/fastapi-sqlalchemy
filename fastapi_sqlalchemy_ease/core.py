@@ -57,7 +57,16 @@ class SQLAlchemy:
     CheckConstraint = CheckConstraint
     Index = Index
     Table = Table
-    relationship = relationship
+    
+    # prevents binding issues
+    @staticmethod
+    def relationship(*args, **kwargs):
+        """
+        Creates a relationship between two models.
+        This is a wrapper around SQLAlchemy's relationship function.
+        """
+        return relationship(*args, **kwargs)
+
 
     def __new__(cls):
         if cls._instance is None:
